@@ -1,0 +1,32 @@
+# Ignore the virtual environment folder
+env/
+venv/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Logs and temp files
+*.log
+*.tmp
+*.bak
+
+# VS Code specific files
+.vscode/
+
+# OS-specific files
+.DS_Store  # macOS
+Thumbs.db  # Windows
+
+# Ignore Python cache and egg files
+*.egg-info/
+*.eggs/
+*.pytest_cache/
+
+# Ignore environment and dependency files
+.env
+.venv
+pip-log.txt
+pip-delete-this-directory.txt
