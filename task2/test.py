@@ -73,25 +73,6 @@ class TestCybersecurityAggregation(unittest.TestCase):
         result = aggregate_company_score(data)
         self.assertTrue(0 <= result <= 90)
 
-    def test_realistic_distribution(self):
-        data = [
-            generate_random_data(35, 15, 60),
-            generate_random_data(55, 20, 80),
-            generate_random_data(25, 10, 200),
-            generate_random_data(75, 10, 150),
-            generate_random_data(45, 10, 100),
-        ]
-        result = aggregate_company_score(data)
-        self.assertTrue(0 <= result <= 90)
-
-    def test_randomized_scores(self):
-        np.random.seed(42)  
-        data = [
-            generate_random_data(np.random.randint(20, 70), 10, np.random.randint(50, 200))
-            for _ in range(5)
-        ]
-        result = aggregate_company_score(data)
-        self.assertTrue(0 <= result <= 90)
 
     def test_one_high_scoring_user(self):
         data = [
@@ -145,15 +126,93 @@ class TestCybersecurityAggregation(unittest.TestCase):
         result = aggregate_company_score(data)
         self.assertTrue(0 <= result <= 90)
 
-    def test_duplicate_departments(self):
+    def test_extreme_low_mean(self):
         data = [
-            generate_random_data(50, 5, 100),
+            generate_random_data(10, 2, 100),
+            generate_random_data(15, 3, 100),
+            generate_random_data(12, 1, 100),
+        ]
+        result = aggregate_company_score(data)
+        self.assertTrue(0 <= result <= 90)
+
+    def test_extreme_high_mean(self):
+        data = [
+            generate_random_data(85, 2, 100),
+            generate_random_data(88, 3, 100),
+            generate_random_data(89, 1, 100),
+        ]
+        result = aggregate_company_score(data)
+        self.assertTrue(0 <= result <= 90)
+
+    def test_two_departments_identical_high_variance(self):
+        data = [
+            generate_random_data(45, 40, 100),
+            generate_random_data(45, 40, 100),
+            generate_random_data(45, 5, 100),
+        ]
+        result = aggregate_company_score(data)
+        self.assertTrue(0 <= result <= 90)
+
+    def test_high_and_low_variance_combined(self):
+        data = [
+            generate_random_data(50, 2, 100),
+            generate_random_data(50, 20, 100),
+        ]
+        result = aggregate_company_score(data)
+        self.assertTrue(0 <= result <= 90)
+
+    def test_one_department_all_max_scores(self):
+        data = [
+            np.full(100, 90),
             generate_random_data(50, 5, 100),
             generate_random_data(50, 5, 100),
         ]
         result = aggregate_company_score(data)
         self.assertTrue(0 <= result <= 90)
 
+    def test_one_department_all_min_scores(self):
+        data = [
+            np.full(100, 0),
+            generate_random_data(50, 5, 100),
+            generate_random_data(50, 5, 100),
+        ]
+        result = aggregate_company_score(data)
+        self.assertTrue(0 <= result <= 90)
+
+    def test_one_department_many_users_high_mean(self):
+        data = [
+            generate_random_data(85, 5, 500),
+            generate_random_data(30, 5, 100),
+            generate_random_data(30, 5, 100),
+        ]
+        result = aggregate_company_score(data)
+        self.assertTrue(0 <= result <= 90)
+
+    def test_high_scores_fewer_users(self):
+        data = [
+            generate_random_data(85, 5, 10),
+            generate_random_data(20, 5, 200),
+            generate_random_data(50, 5, 100),
+        ]
+        result = aggregate_company_score(data)
+        self.assertTrue(0 <= result <= 90)
+
+    def test_low_scores_fewer_users(self):
+        data = [
+            generate_random_data(15, 5, 10),
+            generate_random_data(50, 5, 200),
+            generate_random_data(50, 5, 100),
+        ]
+        result = aggregate_company_score(data)
+        self.assertTrue(0 <= result <= 90)
+
+    def test_very_high_user_count_with_high_mean(self):
+        data = [
+            generate_random_data(85, 5, 500),
+            generate_random_data(50, 5, 50),
+        ]
+        result = aggregate_company_score(data)
+        self.assertTrue(0 <= result <= 90)
 
 if __name__ == '__main__':
     unittest.main()
