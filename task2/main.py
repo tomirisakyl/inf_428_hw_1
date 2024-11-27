@@ -7,8 +7,11 @@ def aggregate_company_score(department_data):
     median_scores = [np.median(scores) for scores in department_data if len(scores) > 0]
     if not median_scores:
         return 0  
-    company_score = np.median(median_scores)
+    company_score = np.mean(median_scores)
     return min(90, max(0, company_score))
+
+  
+
 
 
 
