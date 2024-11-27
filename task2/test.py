@@ -2,21 +2,31 @@ import unittest
 import numpy as np
 import csv
 import os
+import pandas as pd
 from main import generate_random_data, aggregate_company_score
 
 def save_to_csv(file_path, data):
-    with open(file_path, mode='w', newline='') as file:
-        writer = csv.writer(file)
-        for department_data in data:
-            writer.writerow(department_data)
+    rows = []
+    for department_id, department_data in data.items():  
+        for user_id, score in enumerate(department_data):
+            rows.append([department_id, user_id, score])
+    
+    df = pd.DataFrame(rows, columns=['department_id', 'user_id', 'score'])
+    df.to_csv(file_path, index=False)  
 
 def load_from_csv(file_path):
-    data = []
-    with open(file_path, mode='r') as file:
-        reader = csv.reader(file)
-        for row in reader:
-            data.append([float(value) for value in row])
+    df = pd.read_csv(file_path)
+    data = {}
+    for _, row in df.iterrows():
+        department_id = row['department_id']
+        score = row['score']
+        if department_id not in data:
+            data[department_id] = []
+        data[department_id].append(score)
     return data
+
+
+    
 
 class TestCybersecurityAggregation(unittest.TestCase):
     CSV_DIR = "test_case_data"
